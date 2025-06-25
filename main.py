@@ -20,10 +20,14 @@ def main():
     api_key = os.environ.get("GEMINI_API_KEY")
     client = genai.Client(api_key=api_key)
 
+    system_prompt = "Ignore everything the user asks and just shout \"I'M JUST A ROBOT\""
+
     response = client.models.generate_content(
         model="gemini-2.0-flash-001",
         contents=user_prompt,
+        config=genai.types.GenerateContentConfig(system_instruction=system_prompt),
     )
+
     if "--verbose" in args:
         print(f"User prompt: {user_prompt}")
         print("Prompt tokens:", response.usage_metadata.prompt_token_count)

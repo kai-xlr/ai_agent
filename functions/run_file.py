@@ -12,7 +12,12 @@ def run_python_file(working_directory, file_path):
     if file_extension != ".py":
         return f'Error: "{file_path}" is not a Python file.'
     try:
-        result = subprocess.run(['python3', file_path], capture_output=True, text=True, timeout=30)
-    except subprocess.TimeoutExpired:
-        print("The command timed out after 30 seconds.")
+        result = subprocess.run(['python3', file_path], capture_output=True, text=True, timeout=30, cwd=working_directory)
+        if result.stdout == "" and result.stderr == "":
+            return "No output produced."
+        if result.returncode != 0:
+            return f'STDOUT: {result.stdout}, STDERR: {result.stderr}, Process exited with code {result.returncode}'
+        return f'STDOUT: {result.stdout}, STDERR: {result.stderr}'
+    except Exception as e:
+        return f"Error: executing Python file: {e}"
     
