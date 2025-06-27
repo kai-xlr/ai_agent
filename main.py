@@ -26,31 +26,76 @@ You are a helpful AI coding agent.
 When a user asks a question or makes a request, make a function call plan. You can perform the following operations:
 
 - List files and directories
+- Read file contents
+- Execute Python files with optional arguments
+- Write or overwrite files
 
 All paths you provide should be relative to the working directory. You do not need to specify the working directory in your function calls as it is automatically injected for security reasons.
 """
 
-    schema_get_files_info = genai.types.FunctionDeclaration(
+    schema_get_files_info = genai.types.FunctionDeclaration( # type: ignore
     name="get_files_info",
     description="Lists files in the specified directory along with their sizes, constrained to the working directory.",
-    parameters=genai.types.Schema(
-        type=genai.types.Type.OBJECT,
+    parameters=genai.types.Schema( # type: ignore
+        type=genai.types.Type.OBJECT, # type: ignore
         properties={
-            "directory": genai.types.Schema(
-                type=genai.types.Type.STRING,
+            "directory": genai.types.Schema( # type: ignore # type: ignore
+                type=genai.types.Type.STRING, # type: ignore # type: ignore
+                description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
+            ),
+        },
+    ),
+)
+    schema_get_file_content = genai.types.FunctionDeclaration( # type: ignore
+    name="get_file_content",
+    description="Get the content of file in the specified directory, constrained to the working directory.",
+    parameters=genai.types.Schema( # type: ignore
+        type=genai.types.Type.OBJECT, # type: ignore
+        properties={
+            "directory": genai.types.Schema( # type: ignore # type: ignore
+                type=genai.types.Type.STRING, # type: ignore # type: ignore
+                description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
+            ),
+        },
+    ),
+)
+    schema_run_python_file = genai.types.FunctionDeclaration( # type: ignore
+    name="run_file",
+    description="Run a file in the specified directory, constrained to the working directory.",
+    parameters=genai.types.Schema( # type: ignore
+        type=genai.types.Type.OBJECT, # type: ignore
+        properties={
+            "directory": genai.types.Schema( # type: ignore # type: ignore
+                type=genai.types.Type.STRING, # type: ignore # type: ignore
+                description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
+            ),
+        },
+    ),
+)
+    schema_write_file = genai.types.FunctionDeclaration( # type: ignore
+    name="write_file",
+    description="Write a file in the specified directory, constrained to the working directory.",
+    parameters=genai.types.Schema( # type: ignore
+        type=genai.types.Type.OBJECT, # type: ignore
+        properties={
+            "directory": genai.types.Schema( # type: ignore # type: ignore
+                type=genai.types.Type.STRING, # type: ignore # type: ignore
                 description="The directory to list files from, relative to the working directory. If not provided, lists files in the working directory itself.",
             ),
         },
     ),
 )
     
-    available_functions = genai.types.Tool(
+    available_functions = genai.types.Tool( # type: ignore
     function_declarations=[
         schema_get_files_info,
+        schema_get_file_content,
+        schema_run_python_file,
+        schema_write_file,
     ]
 )
     
-    config=genai.types.GenerateContentConfig(
+    config=genai.types.GenerateContentConfig( # type: ignore
         tools=[available_functions], system_instruction=system_prompt
 )
 
@@ -62,8 +107,8 @@ All paths you provide should be relative to the working directory. You do not ne
 
     if "--verbose" in args:
         print(f"User prompt: {user_prompt}")
-        print("Prompt tokens:", response.usage_metadata.prompt_token_count)
-        print("Response tokens:", response.usage_metadata.candidates_token_count)
+        print("Prompt tokens:", response.usage_metadata.prompt_token_count) # type: ignore
+        print("Response tokens:", response.usage_metadata.candidates_token_count) # type: ignore
         
     print("Response:")
     if response.function_calls:
